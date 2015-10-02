@@ -7,7 +7,10 @@ app.set('views', './views');
 app.set('view engine', 'jade');
 
 app.use(stormpath.init(app, {
-  application: process.env.STORMPATH_URL,
+  application: 'https://api.stormpath.com/v1/applications/5ngJCDCWxd8StjPy9k5JmK',
+  secretKey: 'f2f1648b019fc19f79959a2751026add03f9fe5c98a6985c3daa33d000773326',
+  apiKeyId: '47F1RAEPE4PVGT5R94DYE9YGI',
+  apiKeySecret: 'sRVcBUwz8eO3wM6jTD6SmL7WBmpfhh3uVwcQI/c0GQY',
   expandedCustomData: true,
   enableForgotPassword: true,
   redirectUrl: '/dashboard',
