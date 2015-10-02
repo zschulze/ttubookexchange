@@ -9,7 +9,8 @@ app.set('view engine', 'jade');
 app.use(stormpath.init(app, {
   application: process.env.STORMPATH_URL,
   expandedCustomData: true,
-  enableForgotPassword: true
+  enableForgotPassword: true,
+  redirectUrl: '/dashboard',
 }));
 
 app.get('/', function(req, res) {
