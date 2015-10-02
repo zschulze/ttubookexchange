@@ -18,4 +18,9 @@ app.get('/', function(req, res) {
 	});
 });
 
+// Generate a simple dashboard page.
+app.get('/dashboard', stormpath.loginRequired, function(req, res) {
+  res.send('Hi: ' + req.user.email + '. Logout <a href="/logout">here</a>');
+});
+
 app.listen(process.env.PORT || 3000);
