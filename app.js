@@ -3,16 +3,19 @@ var stormpath = require('express-stormpath');
 
 var app = express();
 
+app.set('views', './views');
+app.set('view engine', 'jade');
+
 app.use(stormpath.init(app, {
   application: process.env.STORMPATH_URL,
+  expandedCustomData: true,
+  enableForgotPassword: true
 }));
 
 app.get('/', function(req, res) {
-  res.send("Hey there! Thanks for visting the site! Be sure to <a href='/login'>login</a>!");
-});
-
-app.get('/dashboard', stormpath.loginRequired, function(req, res) {
-  res.json(req.user);
+	res.render('index', {
+		title: 'Welcome'
+	});
 });
 
 app.listen(process.env.PORT || 3000);
