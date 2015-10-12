@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+ <% include ..\views\head %>
+	
+</head>
+<body>
+
+	<header>
+        <% include ..\views\header %>
+    </header>
+	
+	<h1><%= title %><h1>
+	
+	<form action="/addListing" method="post">
+	
+		<div class="input-group">
+			<span class="input-group-addon" id="basic-addon1">Author:</span>
+			<input type="text" name="author" class="form-control" placeholder="author" aria-describedby="basic-addon1">
+		</div>
+		
+		<div class="input-group">
+			<span class="input-group-addon" id="basic-addon1">Title:</span>
+			<input type="text" name="title" class="form-control" placeholder="title" aria-describedby="basic-addon1">
+		</div>
+		
+		<div class="input-group">
+			<span class="input-group-addon" id="basic-addon1">ISBN:</span>
+			<input type="text" name="isbn" class="form-control" placeholder="ISBN" aria-describedby="basic-addon1">
+		</div>
+		
+		<button type="submit" class="btn btn-default">submit</button
+		
+	</form>
+	
+	 <footer>
+        <% include ..\views\footer %>
+    </footer>
+	
+</body>
+</html>
