@@ -9,7 +9,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.14.1",
     "csurf": "^1.8.3",
+    "ejs": "^2.3.4",
     "express": "^4.9.5",
     "express-stormpath": "^0.4.5",
     "forms": "^1.1.4",
