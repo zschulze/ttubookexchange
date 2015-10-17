@@ -48,7 +48,7 @@ var listItems =  [
 app.get('/', function(req, res) {
 	
 	res.render('index', {
-		title: "Textbook Share"
+		title: "Textbok List"
 	});
 });
 
