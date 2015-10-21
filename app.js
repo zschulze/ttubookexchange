@@ -2,6 +2,7 @@ var express = require('express');
 var stormpath = require('express-stormpath');
 var path = require('path');
 var bodyParser = require('body-parser');
+var mysql      = require('mysql');
 
 var app = express();
 
@@ -35,6 +36,17 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json 
 app.use(bodyParser.json())
 
+//create connection to DB
+var connection = mysql.createPool({
+  host     : 'us-cdbr-iron-east-03.cleardb.net',
+  user     : 'bc4b936c54894e',
+  password : 'f5a438e8',
+  database : 'heroku_ec58093a778ea0c'
+});
+
+
+
+
 ////////////////////////////// define routes //////////////////////////
 
 //fake databse
@@ -55,31 +67,29 @@ app.get('/', function(req, res) {
 // search page - get	
 app.get('/search', function(req, res) {
 
-	res.render('search', {
-		title: "Search book"
+	connection.getConnection(function(err, connection) {
+
+		//load data from database (list of books)
+		connection.query('SELECT * FROM listing INNER JOIN book ON listing.ISBN = book.ISBN', function(err, rows, fields) {
+		 if (err) {
+				console.log('error: ', err);
+				throw err;
+			}
+			
+			res.render('search', {
+			title: "Search book",
+			books: rows
+			});
+			
+			connection.release();
+		});
 	});
+
 });
 
 // search page - post	
 app.post('/search', function(req, res) {
-	
-	//load data from database (list of books)
-	
-	res.render('search', {
-		title: "Search book"
-	});
-});
 
-// add listing - get
-app.get('/addListing', function (req,res) {
-	
-	res.render('addListing', {
-		title: "Add Listing"
-	});
-})
-
-// add listing - post
-app.post('/addListing', function (req,res) {
 	
 	//get response body from form
 	var a = req.body.author;
@@ -92,6 +102,79 @@ app.post('/addListing', function (req,res) {
 	console.log(req.body.title);
 	console.log(req.body.isbn);
 	
+	var queryString = '';
+	
+	if(a == "")
+	{
+		queryString = 'SELECT * FROM listing INNER JOIN book ON listing.ISBN = book.ISBN WHERE book.title = "' + t + '" ';
+	}else if(t == "")
+	{
+		queryString = 'SELECT * FROM listing INNER JOIN book ON listing.ISBN = book.ISBN WHERE authors = "' + a + '" ';
+	}else
+	{
+		queryString = 'SELECT * FROM listing INNER JOIN book ON listing.ISBN = book.ISBN WHERE authors = "' + a + '" AND title = "' + t + '" ';
+	}
+	
+	connection.getConnection(function(err, connection) {
+		
+		connection.query(queryString, function(err, rows, fields) {
+		 if (err) {
+				console.log('error: ', err);
+				throw err;
+			}
+
+			for (var i = 0; i < rows.length; i++) {
+			console.log(rows[i]);
+			};
+			
+			res.render('search', {
+			title: "Search book",
+			books: rows
+			});
+			
+			connection.release();
+		});
+	});
+});
+
+// add listing - get
+app.get('/addListing', function (req,res) {
+
+
+	res.render('addListing', {
+		title: "Add Listing"
+	});
+})
+
+// add listing - post
+app.post('/addListing', function (req,res) {
+	
+	//get response body from form
+	var i = req.body.isbn;
+	var p = parseFloat(req.body.price);
+	var c = req.body.condition;
+	
+	console.log(i);
+	console.log(p);
+	console.log(c);
+	
+	//add to database book to database
+	var listing = { ISBN: i, price: p, condition: c, active: 1 };
+	
+	connection.getConnection(function(err, connection) {
+		
+		connection.query('INSERT INTO listing SET ?', listing, function(err,res){
+		 if (err) {
+				console.log('error: ', err);
+				throw err;
+			}
+			
+			console.log('Last insert ID:', res.insertId);
+			
+			connection.release();
+		});
+	});
+	
 	res.redirect('/');
 })
 
@@ -102,5 +185,7 @@ app.get('/dashboard', stormpath.loginRequired, function(req, res) {
 
 
 ////////////////////////////////////////////////////////////////////////
+
+
 
 app.listen(process.env.PORT || 3000);

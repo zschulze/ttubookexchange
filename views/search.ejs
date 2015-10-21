@@ -12,7 +12,56 @@
 	
 	<h1><%= title %><h1>
 	
-	<!-- Search page  -->
+	<form action="/search" method="post">
+	
+	<div class="row">
+	<div class="col-md-6">
+	 
+		<div class="input-group forms">
+			<span class="input-group-addon" id="basic-addon1">Author:</span>
+			<input type="text" name="author" class="form-control" placeholder="author" aria-describedby="basic-addon1">
+		</div>
+	</div>
+	
+	<div class="col-md-6">
+	 
+		<div class="input-group forms">
+			<span class="input-group-addon" id="basic-addon1">Title:</span>
+			<input type="text" name="title" class="form-control" placeholder="title" aria-describedby="basic-addon1">
+		</div>
+	</div>
+	
+	</div>
+		
+	<div class="forms">
+	<button type="submit" class="btn btn-default">submit</button>
+	</div>
+		
+	</form>
+	
+	<table class="table table-hover">
+	<thead>
+	<tr>
+		<th>Title</th>
+		<th>Author</th>
+		<th>ISBN</th>
+		<th>Price</th>
+		<th>Condition</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	<% for (var i = 0; i < books.length; i++) { %>
+	<tr>
+		<td><%= books[i].title %></td>
+		<td><%= books[i].authors %></td>
+		<td><%= books[i].ISBN %></td>
+		<td><%= books[i].price %></td>
+		<td><%= books[i].condition %></td>
+	</tr>
+	<%} %>
+	</tbody>
+	</table>
 
 	 <footer>
         <% include ../views/footer %>
