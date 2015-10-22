@@ -21,7 +21,7 @@ app.use(stormpath.init(app, {
   apiKeySecret: 'sRVcBUwz8eO3wM6jTD6SmL7WBmpfhh3uVwcQI/c0GQY',
   expandedCustomData: true,
   enableForgotPassword: true,
-  redirectUrl: '/dashboard',
+  redirectUrl: '/',
 }));
 
 //bootstrap
