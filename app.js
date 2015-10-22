@@ -104,16 +104,9 @@ app.post('/search', function(req, res) {
 	
 	var queryString = '';
 	
-	if(a == "")
-	{
-		queryString = 'SELECT * FROM listing INNER JOIN book ON listing.ISBN = book.ISBN WHERE book.title = "' + t + '" ';
-	}else if(t == "")
-	{
-		queryString = 'SELECT * FROM listing INNER JOIN book ON listing.ISBN = book.ISBN WHERE authors = "' + a + '" ';
-	}else
-	{
-		queryString = 'SELECT * FROM listing INNER JOIN book ON listing.ISBN = book.ISBN WHERE authors = "' + a + '" AND title = "' + t + '" ';
-	}
+	
+	queryString = 'SELECT * FROM listing INNER JOIN book ON listing.ISBN = book.ISBN WHERE authors = "' + a + '" OR title = "' + t + '" OR book.ISBN = "' + i + '"';
+	
 	
 	connection.getConnection(function(err, connection) {
 		

@@ -15,7 +15,7 @@
 	<form action="/search" method="post">
 	
 	<div class="row">
-	<div class="col-md-6">
+	<div class="col-md-3">
 	 
 		<div class="input-group forms">
 			<span class="input-group-addon" id="basic-addon1">Author:</span>
@@ -23,11 +23,19 @@
 		</div>
 	</div>
 	
-	<div class="col-md-6">
+	<div class="col-md-3">
 	 
 		<div class="input-group forms">
 			<span class="input-group-addon" id="basic-addon1">Title:</span>
 			<input type="text" name="title" class="form-control" placeholder="title" aria-describedby="basic-addon1">
+		</div>
+	</div>
+	
+	<div class="col-md-3">
+	 
+		<div class="input-group forms">
+			<span class="input-group-addon" id="basic-addon1">ISBN:</span>
+			<input type="text" name="isbn" class="form-control" placeholder="isbn" aria-describedby="basic-addon1">
 		</div>
 	</div>
 	
@@ -53,11 +61,11 @@
 	<tbody>
 	<% for (var i = 0; i < books.length; i++) { %>
 	<tr>
-		<td><%= books[i].title %></td>
-		<td><%= books[i].authors %></td>
-		<td><%= books[i].ISBN %></td>
-		<td><%= books[i].price %></td>
-		<td><%= books[i].condition %></td>
+		<td class="searchFont"><%= books[i].title %></td>
+		<td class="searchFont"><%= books[i].authors %></td>
+		<td class="searchFont"><%= books[i].ISBN %></td>
+		<td class="searchFont">$<%= books[i].price %></td>
+		<td class="searchFont"><%= books[i].condition %></td>
 	</tr>
 	<%} %>
 	</tbody>
