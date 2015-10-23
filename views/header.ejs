@@ -1,4 +1,4 @@
-<nav class="navbar navbar-inverse">
+<nav class="navbar navbar-inverse navbar-fixed-top">
   <div class="container-fluid">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
@@ -14,8 +14,13 @@
         <li><a href="/addListing">Sell book</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="/Register"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-        <li><a href="/Login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+        <% if (user){ %>
+          <li><a href="/account"> Welcome, <%- user.fullName %></a></li>
+          <li><a href="/Logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+        <% } else{ %>
+          <li><a href="/Register"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+          <li><a href="/Login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+        <% } %> 
       </ul>
     </div>
   </div>

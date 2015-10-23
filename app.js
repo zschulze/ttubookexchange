@@ -44,9 +44,6 @@ var connection = mysql.createPool({
   database : 'heroku_ec58093a778ea0c'
 });
 
-
-
-
 ////////////////////////////// define routes //////////////////////////
 
 //fake databse
@@ -60,7 +57,16 @@ var listItems =  [
 app.get('/', function(req, res) {
 	
 	res.render('index', {
-		title: "Textbok List"
+		title: "Textbok List",
+		user: req.user
+	});
+});
+
+// account page - get
+app.get('/account', stormpath.loginRequired, function(req, res) {
+	res.render('account', {
+		title: "Account Information",
+		user: req.user
 	});
 });
 
