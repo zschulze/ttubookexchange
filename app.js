@@ -84,7 +84,8 @@ app.get('/search', function(req, res) {
 			
 			res.render('search', {
 			title: "Search book",
-			books: rows
+			books: rows,
+			user: req.user
 			});
 			
 			connection.release();
@@ -128,7 +129,8 @@ app.post('/search', function(req, res) {
 			
 			res.render('search', {
 			title: "Search book",
-			books: rows
+			books: rows,
+			user: req.user
 			});
 			
 			connection.release();
@@ -141,7 +143,8 @@ app.get('/addListing', function (req,res) {
 
 
 	res.render('addListing', {
-		title: "Add Listing"
+		title: "Add Listing",
+		user: req.user
 	});
 })
 
