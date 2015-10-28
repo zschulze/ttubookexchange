@@ -5,19 +5,23 @@
 	
 </head>
 <body>
+<div class="container">
 
 	<header>
         <% include ../views/header %>
     </header>
 	
-	<h1><%= title %><h1>
+	<h1><%= title %></h1>
 
 	<p class="searchFont">Full Name: <%= user.fullName %></p>
 	<p class="searchFont">Email: <%= user.email %></p>
 
+	<a href="/accountUpdate" class="btn btn-default" role="button">Update Info</a>
+
 	 <footer>
         <% include ../views/footer %>
     </footer>
-	
+
+</div>	
 </body>
 </html>

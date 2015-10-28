@@ -70,6 +70,30 @@ app.get('/account', stormpath.loginRequired, function(req, res) {
 	});
 });
 
+// account update page - get
+app.get('/accountUpdate', stormpath.loginRequired, function(req, res) {
+	res.render('accountUpdate', {
+		title: "Update Account Information",
+		user: req.user
+	});
+});
+
+// account update page - post
+app.post('/accountUpdate', function(req, res) {
+
+	//get reponse body from form
+	var givenName = req.body.givenName;
+	var surname = req.body.surname;
+	var email = req.body.email;
+	var password = req.body.password;
+
+	req.user.givenName = givenName;
+	req.user.surname = surname;
+	req.user.email = email;
+	req.user.password = password;
+	req.user.save();
+});
+
 // search page - get	
 app.get('/search', function(req, res) {
 
