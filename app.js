@@ -86,12 +86,17 @@ app.post('/accountUpdate', function(req, res) {
 	var surname = req.body.surname;
 	var email = req.body.email;
 	var password = req.body.password;
-
+	
 	req.user.givenName = givenName;
 	req.user.surname = surname;
 	req.user.email = email;
 	req.user.password = password;
 	req.user.save();
+	
+	res.render('account', {
+		title: "Account Information",
+		user: req.user
+	});
 });
 
 // search page - get	
