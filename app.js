@@ -2,7 +2,8 @@ var express = require('express');
 var stormpath = require('express-stormpath');
 var path = require('path');
 var bodyParser = require('body-parser');
-var mysql      = require('mysql');
+var mysql = require('mysql');
+var Client = require('node-rest-client').Client;
 
 var app = express();
 
@@ -44,6 +45,9 @@ var connection = mysql.createPool({
   database : 'heroku_ec58093a778ea0c'
 });
 
+// rest caller client
+client = new Client();
+
 ////////////////////////////// define routes //////////////////////////
 
 //fake databse
@@ -58,6 +62,15 @@ app.get('/', function(req, res) {
 	
 	res.render('index', {
 		title: "Textbok List",
+		user: req.user
+	});
+});
+
+// payment successful - get	
+app.get('/paymentSuccessful', function(req, res) {
+	
+	res.render('paymentSuccessful', {
+		title: "Payment Successful",
 		user: req.user
 	});
 });
@@ -166,6 +179,102 @@ app.post('/search', function(req, res) {
 		});
 	});
 });
+
+// buy listing - get
+app.get('/buyListing/:id', function (req,res) {
+
+	console.log(req.params.id);
+	var BookId = req.params.id
+	
+	queryString = 'SELECT * FROM listing INNER JOIN book ON listing.ISBN = book.ISBN WHERE listing.id = "' + BookId + '"';
+	
+	connection.getConnection(function(err, connection) {
+		
+		connection.query(queryString, function(err, rows, fields) {
+		 if (err) {
+				console.log('error: ', err);
+				throw err;
+			}
+			
+			res.render('buyListing', {
+			title: "Buy Listing",
+			book: rows[0],
+			user: req.user
+			});
+			
+			connection.release();
+		});
+	});
+	
+})
+
+// buy listing - post
+app.post('/buyListing/:id', function (req,res) {
+
+	console.log(req.params.id);
+	
+	queryString = 'SELECT * FROM listing WHERE id = "' + req.params.id + '"';
+	
+	var price;
+	var userEmail;
+	
+	connection.getConnection(function(err, connection) {
+		
+		connection.query(queryString, function(err, rows, fields) {
+		 if (err) {
+				console.log('error: ', err);
+				throw err;
+			}
+			
+			price = row[0].price;
+			userEmail =  rows[0].seller;
+			
+			connection.release();
+		});
+	});
+	
+	var args = {
+	  data: { "actionType":"PAY",    // Specify the payment action
+			"currencyCode":"USD",  // The currency of the payment
+			"receiverList":{"receiver":[{
+				"amount": price,                    // The payment amount
+				"email": userEmail}]  // The payment Receiver's email address
+			},
+
+			// Where the Sender is redirected to after approving a successful payment
+			"returnUrl":"http://localhost:5000/paymentSuccessful",
+
+			// Where the Sender is redirected to upon a canceled payment
+			"cancelUrl":"http://Payment-Cancel-URL",
+			"requestEnvelope":{
+				"errorLanguage":"en_US",    // Language used to display errors
+				"detailLevel":"ReturnAll"   // Error detail level
+			}
+			},
+	  headers:{"X-PAYPAL-SECURITY-USERID": "enter360-facilitator_api1.gmail.com",
+				"X-PAYPAL-SECURITY-PASSWORD" : "UKSA5ZFGDR4FP9WX",
+				"X-PAYPAL-SECURITY-SIGNATURE" : "A06LgMIYm-.fz6k-iMygW-4cvjBCAbkcSAJ7mlerSOukU33U9n594OzC",
+				"X-PAYPAL-APPLICATION-ID" : "APP-80W284485P519543T",
+				"X-PAYPAL-REQUEST-DATA-FORMAT" : "JSON",
+				"X-PAYPAL-RESPONSE-DATA-FORMAT" : "JSON"} 
+	};
+	
+	// update listing with active
+	 
+	
+	client.post("https://svcs.sandbox.paypal.com/AdaptivePayments/Pay", args, function(data,response) {
+		// parsed response body as js object 
+		//obj = JSON.parse(data);
+		//obj2 = JSON.parse(response);
+		console.log(data.paymentExecStatus);
+		console.log(data.payKey);
+		
+		res.redirect('https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_ap-payment&paykey=' + data.payKey);
+		// raw response 
+		//console.log(responseEnvelope.);
+	});
+		
+})
 
 // add listing - get
 app.get('/addListing', function (req,res) {

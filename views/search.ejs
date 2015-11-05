@@ -66,6 +66,11 @@
 		<td class="searchFont"><%= books[i].ISBN %></td>
 		<td class="searchFont">$<%= books[i].price %></td>
 		<td class="searchFont"><%= books[i].condition %></td>
+		<td>
+		<form action="/buyListing/<%=books[i].id %>">
+		  <input type="submit" value="Buy">
+		</form>
+		</td>
 	</tr>
 	<%} %>
 	</tbody>

@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+ <% include ../views/head %>
+	
+</head>
+<body>
+
+	<header>
+        <% include ../views/header %>
+    </header>
+	
+	<h1><%= title %><h1>
+		<p class="searchFont"><%= book.title %></p>
+		<p class="searchFont"><%= book.authors %></p>
+		<p class="searchFont"><%= book.ISBN %></p>
+		<p class="searchFont">$<%= book.price %></p>
+		<p class="searchFont"><%= book.condition %></p>
+
+		<form action="/buyListing/<%=book.id %>" method="post">
+		  <input type="submit" value="Buy">
+		</form>
+		
+	 <footer>
+        <% include ../views/footer %>
+    </footer>
+	
+</body>
+</html>
