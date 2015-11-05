@@ -181,10 +181,11 @@ app.post('/search', function(req, res) {
 });
 
 // buy listing - get
-app.get('/buyListing/:id', function (req,res) {
+app.get('/buyListing', stormpath.loginRequired, function (req,res) {
 
-	console.log(req.params.id);
-	var BookId = req.params.id
+	console.log(req.query.id);
+	
+	var BookId = req.query.id
 	
 	queryString = 'SELECT * FROM listing INNER JOIN book ON listing.ISBN = book.ISBN WHERE listing.id = "' + BookId + '"';
 	
@@ -206,10 +207,10 @@ app.get('/buyListing/:id', function (req,res) {
 		});
 	});
 	
-})
+});
 
 // buy listing - post
-app.post('/buyListing/:id', function (req,res) {
+app.post('/buyListing/:id' , function (req,res) {
 
 	console.log(req.params.id);
 	
@@ -276,7 +277,7 @@ app.post('/buyListing/:id', function (req,res) {
 })
 
 // add listing - get
-app.get('/addListing', function (req,res) {
+app.get('/addListing', stormpath.loginRequired, function (req,res) {
 
 
 	res.render('addListing', {
