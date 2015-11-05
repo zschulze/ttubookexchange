@@ -215,9 +215,6 @@ app.post('/buyListing/:id', function (req,res) {
 	
 	queryString = 'SELECT * FROM listing WHERE id = "' + req.params.id + '"';
 	
-	var price;
-	var userEmail;
-	
 	connection.getConnection(function(err, connection) {
 		
 		connection.query(queryString, function(err, rows, fields) {
@@ -226,53 +223,55 @@ app.post('/buyListing/:id', function (req,res) {
 				throw err;
 			}
 			
-			price = row[0].price;
-			userEmail =  rows[0].seller;
+			var price = parseFloat(rows[0].price);
+			var userEmail = rows[0].seller;
 			
+			var args = {
+			  data: { "actionType":"PAY",    // Specify the payment action
+					"currencyCode":"USD",  // The currency of the payment
+					"receiverList":{"receiver":[{
+						"amount": price,                    // The payment amount
+						"email": userEmail}]  // The payment Receiver's email address
+					},
+
+					// Where the Sender is redirected to after approving a successful payment
+					"returnUrl":"http://localhost:5000/paymentSuccessful",
+
+					// Where the Sender is redirected to upon a canceled payment
+					"cancelUrl":"http://Payment-Cancel-URL",
+					"requestEnvelope":{
+						"errorLanguage":"en_US",    // Language used to display errors
+						"detailLevel":"ReturnAll"   // Error detail level
+					}
+					},
+			  headers:{"X-PAYPAL-SECURITY-USERID": "enter360-facilitator_api1.gmail.com",
+						"X-PAYPAL-SECURITY-PASSWORD" : "UKSA5ZFGDR4FP9WX",
+						"X-PAYPAL-SECURITY-SIGNATURE" : "A06LgMIYm-.fz6k-iMygW-4cvjBCAbkcSAJ7mlerSOukU33U9n594OzC",
+						"X-PAYPAL-APPLICATION-ID" : "APP-80W284485P519543T",
+						"X-PAYPAL-REQUEST-DATA-FORMAT" : "JSON",
+						"X-PAYPAL-RESPONSE-DATA-FORMAT" : "JSON"} 
+			};
+			
+			// update listing with active
+			 
+			
+			client.post("https://svcs.sandbox.paypal.com/AdaptivePayments/Pay", args, function(data,response) {
+				// parsed response body as js object 
+				//obj = JSON.parse(data);
+				//obj2 = JSON.parse(response);
+				console.log(data.paymentExecStatus);
+				console.log(data.payKey);
+				
+				res.redirect('https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_ap-payment&paykey=' + data.payKey);
+				// raw response 
+				//console.log(responseEnvelope.);
+			});
+	
 			connection.release();
 		});
 	});
 	
-	var args = {
-	  data: { "actionType":"PAY",    // Specify the payment action
-			"currencyCode":"USD",  // The currency of the payment
-			"receiverList":{"receiver":[{
-				"amount": price,                    // The payment amount
-				"email": userEmail}]  // The payment Receiver's email address
-			},
 
-			// Where the Sender is redirected to after approving a successful payment
-			"returnUrl":"http://localhost:5000/paymentSuccessful",
-
-			// Where the Sender is redirected to upon a canceled payment
-			"cancelUrl":"http://Payment-Cancel-URL",
-			"requestEnvelope":{
-				"errorLanguage":"en_US",    // Language used to display errors
-				"detailLevel":"ReturnAll"   // Error detail level
-			}
-			},
-	  headers:{"X-PAYPAL-SECURITY-USERID": "enter360-facilitator_api1.gmail.com",
-				"X-PAYPAL-SECURITY-PASSWORD" : "UKSA5ZFGDR4FP9WX",
-				"X-PAYPAL-SECURITY-SIGNATURE" : "A06LgMIYm-.fz6k-iMygW-4cvjBCAbkcSAJ7mlerSOukU33U9n594OzC",
-				"X-PAYPAL-APPLICATION-ID" : "APP-80W284485P519543T",
-				"X-PAYPAL-REQUEST-DATA-FORMAT" : "JSON",
-				"X-PAYPAL-RESPONSE-DATA-FORMAT" : "JSON"} 
-	};
-	
-	// update listing with active
-	 
-	
-	client.post("https://svcs.sandbox.paypal.com/AdaptivePayments/Pay", args, function(data,response) {
-		// parsed response body as js object 
-		//obj = JSON.parse(data);
-		//obj2 = JSON.parse(response);
-		console.log(data.paymentExecStatus);
-		console.log(data.payKey);
-		
-		res.redirect('https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_ap-payment&paykey=' + data.payKey);
-		// raw response 
-		//console.log(responseEnvelope.);
-	});
 		
 })
 
@@ -297,9 +296,10 @@ app.post('/addListing', function (req,res) {
 	console.log(i);
 	console.log(p);
 	console.log(c);
+	console.log(req.user.email);
 	
 	//add to database book to database
-	var listing = { ISBN: i, price: p, condition: c, active: 1 };
+	var listing = { ISBN: i, price: p, condition: c, active: 1, seller: req.user.email};
 	
 	connection.getConnection(function(err, connection) {
 		
