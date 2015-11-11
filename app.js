@@ -117,17 +117,66 @@ app.get('/search', function(req, res) {
 
 	connection.getConnection(function(err, connection) {
 
+		//variables for search params
+		var a;
+		var t;
+		var i;
+		var listPerPage = 10;
+		var page;
+		
+		//if search params undefined, then set to blank
+		//else set params
+		if(req.query.author == undefined)
+			a = "";
+		else
+			a = req.query.author;
+			
+		if(req.query.titleB == undefined)
+			t = "";
+		else
+			t = req.query.titleB;
+			
+		if(req.query.isbn == undefined)
+			i = "";
+		else
+			i = req.query.isbn;
+		
+		if(req.query.page == undefined)
+			page = 1;
+		else
+			page = req.query.page;
+		
+		var queryString = '';
+	
+		if(a == "" && t == "" && i == "")
+		{
+			queryString = 'SELECT * FROM listing INNER JOIN book ON listing.ISBN = book.ISBN'
+		}else{
+			queryString = 'SELECT * FROM listing INNER JOIN book ON listing.ISBN = book.ISBN WHERE authors = "' + a + '" OR title = "' + t + '" OR book.ISBN = "' + i + '"';
+	
+		}
+			
 		//load data from database (list of books)
-		connection.query('SELECT * FROM listing INNER JOIN book ON listing.ISBN = book.ISBN', function(err, rows, fields) {
+		connection.query(queryString, function(err, rows, fields) {
 		 if (err) {
 				console.log('error: ', err);
 				throw err;
 			}
 			
+			var numberOfPages = Math.ceil(rows.length/listPerPage);
+			var pageRows = rows.slice((page*10)-10,page*10);
+			
 			res.render('search', {
 			title: "Search book",
-			books: rows,
-			user: req.user
+			books: pageRows,
+			user: req.user,
+			next: parseInt(page) + 1 ,
+			previous: parseInt(page) - 1,
+			page: page,
+			numberOfPages: numberOfPages,
+			author: a,
+			titleB: t,
+			isbn: i
 			});
 			
 			connection.release();
@@ -139,20 +188,21 @@ app.get('/search', function(req, res) {
 // search page - post	
 app.post('/search', function(req, res) {
 
-	
+	var listPerPage = 10;
+	var page = 1;
+		
 	//get response body from form
 	var a = req.body.author;
-	var t = req.body.title;
+	var t = req.body.titleB;
 	var i = req.body.isbn;
 	
 	//add to database book to database
 	
 	console.log(req.body.author);
-	console.log(req.body.title);
+	console.log(req.body.titleB);
 	console.log(req.body.isbn);
 	
 	var queryString = '';
-	
 	
 	queryString = 'SELECT * FROM listing INNER JOIN book ON listing.ISBN = book.ISBN WHERE authors = "' + a + '" OR title = "' + t + '" OR book.ISBN = "' + i + '"';
 	
@@ -165,14 +215,20 @@ app.post('/search', function(req, res) {
 				throw err;
 			}
 
-			for (var i = 0; i < rows.length; i++) {
-			console.log(rows[i]);
-			};
+			var numberOfPages = Math.ceil(rows.length/listPerPage);
+			var pageRows = rows.slice((page*10)-10,page*10);
 			
 			res.render('search', {
 			title: "Search book",
 			books: rows,
-			user: req.user
+			user: req.user,
+			next: parseInt(page) + 1 ,
+			previous: parseInt(page) - 1,
+			page: page,
+			numberOfPages: numberOfPages,
+			author: a,
+			titleB: t,
+			isbn: i
 			});
 			
 			connection.release();

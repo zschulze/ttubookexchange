@@ -36,3 +36,8 @@ body {
   padding-right: 0px;
   margin-right: 0px;
 }
+
+.centerMargin {
+	padding-left: 30px;
+	padding-right: 30px;
+}
