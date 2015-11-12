@@ -60,10 +60,42 @@ var listItems =  [
 // home page - get	
 app.get('/', function(req, res) {
 	
-	res.render('index', {
-		title: "Textbok List",
-		user: req.user
-	});
+	//if not logged in
+	if(req.user == undefined)
+	{
+		res.render('index', {
+			title: "Textbok List",
+			user: req.user,
+			books: undefined
+		});
+	
+	}else{ //if logged in
+		
+		var seller = req.user.email;
+		var queryString = '';
+		queryString = 'SELECT * FROM listing INNER JOIN book ON listing.ISBN = book.ISBN WHERE seller = "' + seller + '"';
+		
+		
+		connection.getConnection(function(err, connection) {
+			
+			connection.query(queryString, function(err, rows, fields) {
+			 if (err) {
+					console.log('error: ', err);
+					throw err;
+				}
+				
+				res.render('index', {
+					title: "Textbok List",
+					user: req.user,
+					books: rows
+				});
+				
+				connection.release();
+			});
+		});
+	}
+		
+	
 });
 
 // payment successful - get	

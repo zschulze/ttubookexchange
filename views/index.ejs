@@ -17,12 +17,49 @@
  <center>
   <h1>What are you trying to do today ?<h1>
 </center>
+
 <a href="/search?page=1">
  <img src="images/book.png" alt="book" style="width:304px;height:228px;" align="left" >
 </a>
 <a href="/addListing">
 <img src="images/money.png" alt="money" style="width:304px;height:228px;" align="right">
 </a>
+
+ <h1>Your books for sell<h1>
+ 
+	<% if (user){ %>
+	
+		<div class="table-responsive">
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>Title</th>
+					<th>Author</th>
+					<th>ISBN</th>
+					<th>Price</th>
+					<th>Condition</th>
+				</tr>
+			</thead>
+		
+			<tbody>
+			<% for (var i = 0; i < books.length; i++) { %>
+				<tr>
+					<td class="searchFont"><%= books[i].title %></td>
+					<td class="searchFont"><%= books[i].authors %></td>
+					<td class="searchFont"><%= books[i].ISBN %></td>
+					<td class="searchFont">$<%= books[i].price %></td>
+					<td class="searchFont"><%= books[i].condition %></td>
+				</tr>
+			<%} %>
+			</tbody>
+		</table>
+	</div>
+			
+	<% } else{ %>
+		<p> Not logged in</p>
+	<% } %> 
+	
+	
 	<footer>
         <% include ../views/footer %>
     </footer>

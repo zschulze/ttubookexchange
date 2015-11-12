@@ -4,7 +4,7 @@
  <% include ../views/head %>
 	
 </head>
-<body>
+<body class="centerMargin">
 
 	<header>
         <% include ../views/header %>
@@ -19,7 +19,7 @@
 		<p class="searchFont"><%= book.condition %></p>
 
 		<form action="/buyListing/<%=book.id %>" method="post">
-		  <input type="submit" value="Buy">
+		  <input type="submit" value="Buy" class="btn btn-default">
 		</form>
 		
 	 <footer>
