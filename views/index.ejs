@@ -19,16 +19,17 @@
 </center>
 
 <a href="/search?page=1">
- <img src="images/book.png" alt="book" style="width:304px;height:228px;" align="left" >
+ <img src="images/book.png" alt="book" style="width:625px;height:450px;" align="left" >
 </a>
 <a href="/addListing">
-<img src="images/money.png" alt="money" style="width:304px;height:228px;" align="right">
+<img src="images/money.png" alt="money" style="width:625px;height:450px;" align="right">
 </a>
-
+<br>
+<br>
  <h1>Your books for sell<h1>
- 
+
 	<% if (user){ %>
-	
+
 		<div class="table-responsive">
 		<table class="table table-hover">
 			<thead>
@@ -40,7 +41,7 @@
 					<th>Condition</th>
 				</tr>
 			</thead>
-		
+
 			<tbody>
 			<% for (var i = 0; i < books.length; i++) { %>
 				<tr>
@@ -54,12 +55,12 @@
 			</tbody>
 		</table>
 	</div>
-			
+
 	<% } else{ %>
 		<p> Not logged in</p>
-	<% } %> 
-	
-	
+	<% } %>
+
+
 	<footer>
         <% include ../views/footer %>
     </footer>
