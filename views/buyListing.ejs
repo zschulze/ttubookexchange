@@ -12,11 +12,11 @@
 	
 	<h1><%= title %><h1>
 		
-		<p class="searchFont"><%= book.title %></p>
-		<p class="searchFont"><%= book.authors %></p>
-		<p class="searchFont"><%= book.ISBN %></p>
-		<p class="searchFont">$<%= book.price %></p>
-		<p class="searchFont"><%= book.condition %></p>
+		<p class="searchFont">Title: <%= book.title %></p>
+		<p class="searchFont">Author: <%= book.authors %></p>
+		<p class="searchFont">ISBN: <%= book.ISBN %></p>
+		<p class="searchFont">Price: $<%= book.price %></p>
+		<p class="searchFont">Condition: <%= book.condition %></p>
 
 		<form action="/buyListing/<%=book.id %>" method="post">
 		  <input type="submit" value="Buy" class="btn btn-default">
