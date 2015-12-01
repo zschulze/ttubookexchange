@@ -4,6 +4,9 @@ var path = require('path');
 var bodyParser = require('body-parser');
 var mysql = require('mysql');
 var Client = require('node-rest-client').Client;
+var api_key = 'key-b0d72613cb383c27201d5dea354c3494';
+var domain = 'app60d9918278924dc7aba81dddf2010fb5.mailgun.org';
+var mailgun = require('mailgun-js')({apiKey: api_key, domain: domain});
 
 var app = express();
 
@@ -302,7 +305,7 @@ app.post('/buyListing/:id' , function (req,res) {
 
 	console.log(req.params.id);
 	
-	queryString = 'SELECT * FROM listing WHERE id = "' + req.params.id + '"';
+	queryString = 'SELECT * FROM listing INNER JOIN book on listing.ISBN=book.ISBN WHERE id = "' + req.params.id + '"';
 	
 	connection.getConnection(function(err, connection) {
 		
@@ -314,7 +317,7 @@ app.post('/buyListing/:id' , function (req,res) {
 			
 			var price = parseFloat(rows[0].price);
 			var userEmail = rows[0].seller;
-			
+			var title = rows[0].title
 			var args = {
 			  data: { "actionType":"PAY",    // Specify the payment action
 					"currencyCode":"USD",  // The currency of the payment
@@ -351,7 +354,31 @@ app.post('/buyListing/:id' , function (req,res) {
 				console.log(data.paymentExecStatus);
 				console.log(data.payKey);
 				
+				
 				res.redirect('https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_ap-payment&paykey=' + data.payKey);
+				
+				var data = {
+				from: 'TTU Book Exchange <TTUBookExchange@app60d9918278924dc7aba81dddf2010fb5.mailgun.org>',
+				to: req.user.email,
+				subject: 'Your Purchase Summary from TTU Book Exchange',
+				text: 'You have purchased ' + title + ' from ' + userEmail + ' for $' + price + '. Please reach out to the seller to schedule a meetup time to receive your purchase.'
+				};
+				
+				mailgun.messages().send(data, function (error, body) {
+				console.log(body);
+				});
+				
+				data = {
+				from: 'TTU Book Exchange <TTUBookExchange@app60d9918278924dc7aba81dddf2010fb5.mailgun.org>',
+				to: userEmail,
+				subject: 'Your Listing Sale Summary from TTU Book Exchange',
+				text: 'Your listing for ' + title + ' has been purchased by ' + req.user.email + ' for $' + price + '. Please reach out to the buyer to schedule a meetup time to deliver your book.'
+				};
+				
+				mailgun.messages().send(data, function (error, body) {
+				console.log(body);
+				});
+			
 				// raw response 
 				//console.log(responseEnvelope.);
 			});
@@ -399,6 +426,16 @@ app.post('/addListing', function (req,res) {
 			}
 			
 			console.log('Last insert ID:', res.insertId);
+			var data = {
+				from: 'TTU Book Exchange <TTUBookExchange@app60d9918278924dc7aba81dddf2010fb5.mailgun.org>',
+				to: req.user.email,
+				subject: 'New Listing',
+				text: 'You have posted a new listing! We will notify you once it has sold.'
+				};
+				
+			mailgun.messages().send(data, function (error, body) {
+			console.log(body);
+			});
 			
 			connection.release();
 		});
